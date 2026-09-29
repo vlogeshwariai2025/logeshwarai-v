@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Export Successful - ComicCraft</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    body {
+      background-color: #f8fafc;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .success-box {
+      max-width: 580px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 48px 38px;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      border: 1px solid #e2e8f0;
+    }
+    .check-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+      color: #16a34a;
+      font-size: 2.8rem;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
+    }
+    h1 {
+      color: #15803d;
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0 0 14px 0;
+      letter-spacing: -0.4px;
+    }
+    p {
+      color: #475569;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin: 0 0 32px 0;
+    }
+    .actions-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+    .btn-create-new {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: #ffffff;
+      padding: 14px 34px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-create-new:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+    }
+    .btn-redownload {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #64748b;
+      font-size: 0.92rem;
+      text-decoration: underline;
+      padding: 6px 12px;
+      transition: color 0.2s;
+    }
+    .btn-redownload:hover {
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="success-box">
+    <div class="check-circle">✓</div>
+    <h1>Comic Exported Successfully!</h1>
+    <p>Your illustrated AI comic has been successfully generated and compiled into a multi-page PDF! Dive back in and craft your next story.</p>
+
+    <div class="actions-wrap">
+      <a href="/" class="btn-create-new">
+        🎨 Go Create Another Story
+      </a>
+
+      {% if pdf_path %}
+      <a href="{{ pdf_path }}" download class="btn-redownload">
+        📥 Click here if your PDF download didn't start automatically
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+</body>
+</html>

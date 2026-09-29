@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComicCraft - AI Comic Story Creator</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    body {
+      background: #0b1120 url('/static/images/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.35) 0%, rgba(11, 17, 32, 0.6) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .form-wrapper {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 560px;
+      padding: 24px 20px;
+    }
+    .comic-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 34px 38px;
+      box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.35), 0 8px 16px -4px rgba(15, 23, 42, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      transition: all 0.3s ease;
+    }
+    .card-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .studio-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eef2ff;
+      color: #4f46e5;
+      border: 1px solid #c7d2fe;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .card-header h1 {
+      font-size: 1.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: -0.5px;
+    }
+    .card-header p {
+      margin: 8px 0 0;
+      font-size: 0.94rem;
+      color: #64748b;
+      line-height: 1.45;
+    }
+    .field-group {
+      margin-bottom: 18px;
+    }
+    .field-group label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 7px;
+    }
+    .field-input, .field-select, .field-textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 11px 14px;
+      font-size: 0.95rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #0f172a;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: inherit;
+    }
+    .field-input::placeholder, .field-textarea::placeholder {
+      color: #94a3b8;
+      font-size: 0.90rem;
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.16);
+      background-color: #ffffff;
+    }
+    .field-textarea {
+      resize: vertical;
+      min-height: 85px;
+      line-height: 1.5;
+    }
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .sample-pill-container {
+      margin-bottom: 20px;
+    }
+    .sample-pills-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .pill {
+      font-size: 0.80rem;
+      font-weight: 600;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .pill:hover {
+      background: #eef2ff;
+      color: #4338ca;
+      border-color: #c7d2fe;
+      transform: translateY(-1px);
+    }
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: #ffffff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 13px 20px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+    }
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+    /* Loading overlay */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(11, 17, 32, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #ffffff;
+      text-align: center;
+      padding: 24px;
+    }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.15);
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 22px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-text {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+    .loading-subtext {
+      font-size: 0.96rem;
+      color: #94a3b8;
+      max-width: 420px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="form-wrapper">
+    <div class="comic-card">
+      <div class="card-header">
+        <div class="studio-badge">✨ AI Comic Creation Studio</div>
+        <h1>🎨 Create Your Comic Story</h1>
+        <p>Transform your imagination into a 5-panel illustrated graphic novel with Gemini & Stable Diffusion</p>
+      </div>
+
+      <!-- Quick sample prompts -->
+      <div class="sample-pill-container">
+        <div class="sample-pills-label">Prompt Inspirations:</div>
+        <div class="pills">
+          <span class="pill" onclick="fillPrompt('A brave cyber-fox discovering a forgotten floating temple in an enchanted forest.', 'Kael', 'enchanted realm', 'dramatic', 'comic book')">🦊 Mystic Fox</span>
+          <span class="pill" onclick="fillPrompt('A witty astronaut discovering ancient singing crystals on a neon crystalline planet.', 'Lyra', 'space', 'poetic', 'anime')">🚀 Nebula Voyager</span>
+          <span class="pill" onclick="fillPrompt('A culinary robot frantically trying to bake gourmet pizza during zero-gravity.', 'Gizmo', 'city', 'funny', 'comic book')">🤖 Cyber Chef</span>
+          <span class="pill" onclick="fillPrompt('An alchemist student accidentally awakens the clockwork guardian of the grand library.', 'Maya', 'school', 'mysterious', 'realistic')">🕰️ Clockwork Secret</span>
+        </div>
+      </div>
+
+      <form action="/generate" method="POST" id="comicForm" onsubmit="showLoading()">
+        <!-- Story Prompt -->
+        <div class="field-group">
+          <label for="prompt">Story Premise & Plot:</label>
+          <textarea id="prompt" name="prompt" class="field-textarea" placeholder="e.g. A brave cyber-fox discovering a forgotten floating temple in an enchanted forest..." required>A brave cyber-fox discovering a forgotten floating temple in an enchanted forest.</textarea>
+        </div>
+
+        <!-- Main Character Name -->
+        <div class="field-group">
+          <label for="character_name">Protagonist / Hero Name:</label>
+          <input type="text" id="character_name" name="character_name" class="field-input" placeholder="e.g. Kael, Lyra, Sparky, or Captain Nova" value="Kael" required>
+        </div>
+
+        <!-- Setting & Tone (2 columns) -->
+        <div class="two-cols">
+          <div class="field-group">
+            <label for="setting">World & Setting:</label>
+            <select id="setting" name="setting" class="field-select">
+              <option value="enchanted realm" selected>Enchanted Realm</option>
+              <option value="forest">Mystic Forest</option>
+              <option value="space">Deep Space</option>
+              <option value="cyberpunk metropolis">Cyberpunk Metropolis</option>
+              <option value="school">Ancient Academy</option>
+              <option value="city">Urban City</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="tone">Narrative Tone:</label>
+            <select id="tone" name="tone" class="field-select">
+              <option value="dramatic" selected>Dramatic</option>
+              <option value="light-hearted">Light-hearted</option>
+              <option value="funny">Humorous / Funny</option>
+              <option value="poetic">Poetic & Mythic</option>
+              <option value="mysterious">Mysterious & Suspenseful</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Art Style -->
+        <div class="field-group">
+          <label for="style">Visual Art Style:</label>
+          <select id="style" name="style" class="field-select">
+            <option value="comic book" selected>Classic Comic Book</option>
+            <option value="anime">Anime & Manga Style</option>
+            <option value="realistic">Cinematic Realistic</option>
+            <option value="graphic novel">Graphic Novel (Dark & Inky)</option>
+            <option value="pixel art">Retro Pixel Art</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          ⚡ Bring Story to Life
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Animation Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingTitle">Crafting Your 5-Panel Comic...</div>
+    <div class="loading-subtext" id="loadingMsg">Gemini is scripting your panels & your RTX 4050 GPU is painting the scenes. Hang tight!</div>
+  </div>
+
+  <script>
+    function fillPrompt(prompt, character, setting, tone, style) {
+      document.getElementById('prompt').value = prompt;
+      document.getElementById('character_name').value = character;
+      document.getElementById('setting').value = setting;
+      document.getElementById('tone').value = tone;
+      document.getElementById('style').value = style;
+    }
+
+    function showLoading() {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+      const messages = [
+        "Gemini Flash is drafting the 5-panel layout & beats...",
+        "Gemini Pro is scripting the narrative dialogue & captions...",
+        "Your RTX 4050 GPU is painting comic artwork with Stable Diffusion...",
+        "Assembling speech balloons, scenes, and panel bindings...",
+        "Compiling the high-resolution printable PDF..."
+      ];
+      let i = 0;
+      setInterval(() => {
+        i = (i + 1) % messages.length;
+        const msgEl = document.getElementById('loadingMsg');
+        if (msgEl) msgEl.innerText = messages[i];
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
